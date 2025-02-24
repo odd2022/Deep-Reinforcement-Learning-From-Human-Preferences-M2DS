@@ -27,6 +27,7 @@ model = DQN(
     exploration_fraction=0.1,  # Phase d'exploration (ε-greedy)
     exploration_final_eps=0.02,  # Valeur minimale de epsilon
     verbose=1,  # Affichage des logs
+    tensorboard_log="./dqn_logs/",
 )
 
 # Entraîner le modèle pendant 500 000 steps (peut être ajusté)
