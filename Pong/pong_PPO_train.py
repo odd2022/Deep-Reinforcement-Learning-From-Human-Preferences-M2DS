@@ -22,11 +22,11 @@ model = PPO(
     batch_size=64,  # Taille du batch (plus grand que DQN)
     n_steps=128,  # Nombre de steps avant mise à jour
     verbose=1,
-    tensorboard_log="./ppo_logs/",  # Suivi de l'apprentissage
+    tensorboard_log="./tensorboard_logs/ppo_logs/",  # Suivi de l'apprentissage
 )
 
 # Entraîner le modèle
-model.learn(total_timesteps=1_000_000)
+model.learn(total_timesteps=50_000_000)
 
 # Sauvegarder l'agent
 model.save("ppo_pong")
