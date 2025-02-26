@@ -33,7 +33,7 @@ class PrefInterface:
         choice = input("Quel segment préférez-vous ? (1/2) ou (Enter pour passer) : ")
 
         if choice in ["1", "2"]:
-            print(f"🎯 Préférence choisie : {choice}")
+            print(f"Préférence choisie : {choice}")
             return (s1, s2, (1.0, 0.0) if choice == "1" else (0.0, 1.0))
 
         print("Aucune préférence donnée, on ignore cette comparaison.")
