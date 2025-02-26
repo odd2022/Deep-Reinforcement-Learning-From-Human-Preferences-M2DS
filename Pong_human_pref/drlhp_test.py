@@ -1,7 +1,7 @@
 if __name__ == "__main__":
     import time
     import gymnasium as gym
-    from trial import HumanPreferencesEnvWrapper
+    from drlhp_train_basic import HumanPreferencesEnvWrapper
 
     env = HumanPreferencesEnvWrapper(gym.make("CartPole-v1"), segment_length=20)
 
@@ -10,7 +10,7 @@ if __name__ == "__main__":
     for episode in range(num_episodes):
         if episode == num_episodes // 2:
             env.switch_to_predicted_reward()
-            print("🚀 Activation de la récompense prédite par le modèle !")
+            print("Activation de la récompense prédite par le modèle !")
 
         obs, _ = env.reset()  # Gymnasium retourne un tuple (obs, info)
         done = False
@@ -32,4 +32,4 @@ if __name__ == "__main__":
             loss = env.reward_predictor.train_model(s1, s2, preference, env.optimizer, env.criterion)
             print(f"Loss: {loss}")
 
-    print("✅ Entraînement terminé !")
+    print("Entraînement terminé !")
