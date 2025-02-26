@@ -75,50 +75,89 @@ class PrefInterface:
         height, width = s1[0][0].shape[:2]
 
         border = np.zeros((height, 10), dtype=np.uint8)
+        border = np.expand_dims(border, axis=-1)  # Ajoute une 3e dimension (H, 10, 1)
+        border = np.repeat(border, 3, axis=-1)  # Passe à (H, 10, 3) pour matcher avec RGB
 
         for t in range(seg_len):
-            frame_left = cv2.cvtColor(s1[t][0], cv2.COLOR_RGB2GRAY)  
-            frame_right = cv2.cvtColor(s2[t][0], cv2.COLOR_RGB2GRAY)  
+            frame_left = s1[t][0]  # Observation segment 1
+            frame_right = s2[t][0]  # Observation segment 2
+
+            print(f"Frame left shape: {frame_left.shape}, Frame right shape: {frame_right.shape}, Border shape: {border.shape}")
+
             combined_frame = np.hstack((frame_left, border, frame_right))
 
             cv2.imshow("Segment Comparison", combined_frame)
-            cv2.waitKey(100)
+            cv2.waitKey(100)  # Affiche chaque frame pendant 100ms
 
-        print("\n[PREFERENCE] : Tapez 'L' pour gauche, 'R' pour droite, 'E' pour neutre, 'Q' pour ignorer.")
+        print("\n🖥️ Ferme la fenêtre de l'image, puis entre ta préférence.")
+
+        cv2.waitKey(0)  
+        cv2.destroyAllWindows()  
 
         while True:
-            key = cv2.waitKey(0) & 0xFF  
+            choice = input("Votre choix (L pour gauche, R pour droite, E pour neutre, Q pour ignorer) : ").strip().upper()
 
-            if key == ord("l"):
-                pref = (1.0, 0.0)  
-                break
-            elif key == ord("r"):
-                pref = (0.0, 1.0)  
-                break
-            elif key == ord("e"):
-                pref = (0.5, 0.5)  
-                break
-            elif key == ord("q"):
-                pref = None  
-                break
+            if choice == "L":
+                return (1.0, 0.0)  # Gauche préféré
+            elif choice == "R":
+                return (0.0, 1.0)  # Droite préféré
+            elif choice == "E":
+                return (0.5, 0.5)  # Préférence neutre
+            elif choice == "Q":
+                return None  # Ignorer la comparaison
             else:
-                print("⚠️ Touche invalide, veuillez appuyer sur L, R, E ou Q.")
+                print("⚠️ Choix invalide, entre L, R, E ou Q.")
 
-        cv2.destroyAllWindows()
-        return pref
+
 
 class RewardPredictor(nn.Module):
     def __init__(self, input_dim):
         super(RewardPredictor, self).__init__()
-        self.fc1 = nn.Linear(input_dim, 128)
+        flattened_input_dim = input_dim[0] * input_dim[1] * input_dim[2]  # Flatten (H * W * C)
+        self.fc1 = nn.Linear(flattened_input_dim, 128)  # Update input size here
         self.fc2 = nn.Linear(128, 64)
         self.fc3 = nn.Linear(64, 1)
         self.relu = nn.ReLU()
-    
+
     def forward(self, x):
         x = self.relu(self.fc1(x))
         x = self.relu(self.fc2(x))
         return self.fc3(x)
+
+
+    def train_model(self, s1, s2, preference, optimizer, criterion):
+        optimizer.zero_grad()
+
+        s1_obs = np.array([obs for obs, _ in s1], dtype=np.float32)
+        s2_obs = np.array([obs for obs, _ in s2], dtype=np.float32)
+
+        # Convert numpy arrays to PyTorch tensors
+        s1_tensor = torch.tensor(np.mean(s1_obs, axis=0), dtype=torch.float32).unsqueeze(0)
+        s2_tensor = torch.tensor(np.mean(s2_obs, axis=0), dtype=torch.float32).unsqueeze(0)
+
+        # Print tensor shape before flattening
+        print(f"Before flattening: s1_tensor shape: {s1_tensor.shape}, s2_tensor shape: {s2_tensor.shape}")
+
+        # Flatten the input tensors (convert from [1, H, W, C] to [1, H*W*C])
+        s1_tensor = s1_tensor.view(1, -1)
+        s2_tensor = s2_tensor.view(1, -1)
+
+        # Print tensor shape after flattening
+        print(f"After flattening: s1_tensor shape: {s1_tensor.shape}, s2_tensor shape: {s2_tensor.shape}")
+
+        # Forward pass through the reward predictor
+        r1 = self.forward(s1_tensor).squeeze()
+        r2 = self.forward(s2_tensor).squeeze()
+
+        # Compute preference-based loss
+        input_tensor = torch.sigmoid(r1 - r2).unsqueeze(0)
+        target = torch.tensor([preference[0]], dtype=torch.float32)
+
+        loss = criterion(input_tensor, target)
+        loss.backward()
+        optimizer.step()
+
+        return loss.item()
 
 class HumanPreferencesEnvWrapper(gym.Wrapper):
     def __init__(self, env, segment_length=20, max_segments=1000, synthetic_prefs=False, log_dir="./logs"):
@@ -127,7 +166,7 @@ class HumanPreferencesEnvWrapper(gym.Wrapper):
         self.current_segment = []
         self.segments = deque(maxlen=max_segments)
         self.pref_interface = PrefInterface(synthetic_prefs, max_segments, log_dir)
-        self.reward_predictor = RewardPredictor(input_dim=env.observation_space.shape[0])
+        self.reward_predictor = RewardPredictor(input_dim=env.observation_space.shape)
         self.optimizer = optim.Adam(self.reward_predictor.parameters(), lr=1e-3)
         self.criterion = nn.BCEWithLogitsLoss()
         self.use_learned_reward = False  
@@ -179,9 +218,19 @@ class HumanPreferencesEnvWrapper(gym.Wrapper):
         """Affiche la comparaison et entraîne le modèle en fonction de la préférence utilisateur."""
         pref = self.pref_interface.query_user()
 
-        if pref:
+        if pref is not None:
+            pair = self.pref_interface.sample_seg_pair()  # Vérifier si une paire est disponible
+            
+            if pair is None:
+                print("⏳ Pas encore assez de paires de segments non testées.")
+                return  # Sortir proprement si aucune paire n'est disponible
+
+            s1, s2 = pair
+            preference = pref
+
             print("🎯 Préférence reçue, entraînement en cours...")
-            s1, s2, preference = pref
             loss = self.reward_predictor.train_model(s1, s2, preference, self.optimizer, self.criterion)
             print(f"✅ Loss: {loss}")
+
+                
 
