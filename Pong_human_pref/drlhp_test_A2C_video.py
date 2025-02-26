@@ -43,8 +43,8 @@ for episode in range(num_episodes):
         loss = env.get_attr("reward_predictor")[0].train_model(
             s1, s2, preference, env.get_attr("optimizer")[0], env.get_attr("criterion")[0]
         )
-        print(f"🔹 Loss du modèle de récompense : {loss}")
+        print(f"Loss du modèle de récompense : {loss}")
 
     model.learn(total_timesteps=500)
 
-print("🎉 Entraînement terminé avec A2C !")
+print("Entraînement terminé avec A2C !")

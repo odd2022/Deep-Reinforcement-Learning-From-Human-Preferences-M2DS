@@ -22,12 +22,12 @@ class PrefInterface:
     def add_segment(self, segment):
         """Ajoute un segment à la liste et affiche son ajout."""
         self.segments.append(segment)
-        print(f"📝 Nouveau segment ajouté ! Total : {len(self.segments)}")
+        print(f"Nouveau segment ajouté ! Total : {len(self.segments)}")
 
     def sample_seg_pair(self):
         """Sélectionne deux segments non encore comparés."""
         if len(self.segments) < 2:
-            print("⏳ Pas encore assez de segments pour comparaison.")
+            print("Pas encore assez de segments pour comparaison.")
             return None  
 
         segment_idxs = list(range(len(self.segments)))
@@ -43,7 +43,7 @@ class PrefInterface:
                 s1_hash = hash(s1_frames.tobytes())
                 s2_hash = hash(s2_frames.tobytes())
             else:
-                print("⚠️ Erreur de format de frame, attendu numpy.ndarray.")
+                print("Erreur de format de frame, attendu numpy.ndarray.")
                 continue  
 
             if ((s1_hash, s2_hash) not in self.tested_pairs) and \
@@ -52,13 +52,13 @@ class PrefInterface:
                 self.tested_pairs.add((s2_hash, s1_hash))
                 return s1, s2
 
-        print("⏳ Pas encore assez de paires de segments non testées.")
+        print("Pas encore assez de paires de segments non testées.")
         return None  
 
     def query_user(self):
         """Demande à l'utilisateur de choisir un segment préféré."""
         if len(self.segments) < 2:
-            print("⏳ Pas encore assez de segments pour comparaison.")
+            print("Pas encore assez de segments pour comparaison.")
             return None  
 
         pair = self.sample_seg_pair()  
@@ -66,7 +66,7 @@ class PrefInterface:
             s1, s2 = pair
             return self.ask_user(s1, s2)
         else:
-            print("⏳ Pas encore assez de segments pour comparaison.")
+            print("Pas encore assez de segments pour comparaison.")
             return None
 
     def ask_user(self, s1, s2):
@@ -106,7 +106,7 @@ class PrefInterface:
             elif choice == "Q":
                 return None  # Ignorer la comparaison
             else:
-                print("⚠️ Choix invalide, entre L, R, E ou Q.")
+                print("Choix invalide, entre L, R, E ou Q.")
 
 
 
@@ -222,15 +222,15 @@ class HumanPreferencesEnvWrapper(gym.Wrapper):
             pair = self.pref_interface.sample_seg_pair()  # Vérifier si une paire est disponible
             
             if pair is None:
-                print("⏳ Pas encore assez de paires de segments non testées.")
+                print("Pas encore assez de paires de segments non testées.")
                 return  # Sortir proprement si aucune paire n'est disponible
 
             s1, s2 = pair
             preference = pref
 
-            print("🎯 Préférence reçue, entraînement en cours...")
+            print("Préférence reçue, entraînement en cours...")
             loss = self.reward_predictor.train_model(s1, s2, preference, self.optimizer, self.criterion)
-            print(f"✅ Loss: {loss}")
+            print(f"Loss: {loss}")
 
                 
 
