@@ -82,7 +82,7 @@ class PrefInterface:
             frame_left = s1[t][0]  # Observation segment 1
             frame_right = s2[t][0]  # Observation segment 2
 
-            print(f"Frame left shape: {frame_left.shape}, Frame right shape: {frame_right.shape}, Border shape: {border.shape}")
+            # print(f"Frame left shape: {frame_left.shape}, Frame right shape: {frame_right.shape}, Border shape: {border.shape}")
 
             combined_frame = np.hstack((frame_left, border, frame_right))
 
