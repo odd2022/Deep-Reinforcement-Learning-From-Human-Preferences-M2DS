@@ -38,4 +38,4 @@ for episode in range(num_episodes):
 
     model.learn(total_timesteps=500)
 
-print("🏆 Training completed with A2C!")
+print("Training completed with A2C!")
