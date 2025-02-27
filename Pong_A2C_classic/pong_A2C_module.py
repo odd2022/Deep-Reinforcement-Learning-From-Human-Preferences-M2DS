@@ -2,7 +2,7 @@ import gymnasium as gym
 import os
 import ale_py
 from stable_baselines3 import A2C
-from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack, VecNormalize
+from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack, VecNormalize, VecTransposeImage
 from stable_baselines3.common.atari_wrappers import AtariWrapper
 from stable_baselines3.common.monitor import Monitor
 
@@ -20,6 +20,7 @@ def make_env():
 # Création de l'environnement avec `VecFrameStack` et `VecNormalize`
 env = DummyVecEnv([make_env])
 env = VecFrameStack(env, n_stack=4)  # Met les canaux en premier
+env = VecTransposeImage(env)
 # env = VecNormalize(env, norm_obs=True, norm_reward=True)  # Normalisation des rewards activée
 
 obs = env.reset()
@@ -37,7 +38,7 @@ model = A2C(
     max_grad_norm=0.5,  
     verbose=1,
     tensorboard_log=log_dir,
-    policy_kwargs={"normalize_images": False},  # Evite la double normalisation
+    # policy_kwargs={"normalize_images": False},  # Evite la double normalisation
     device="auto"  # Utilise le GPU si disponible
 )
 
