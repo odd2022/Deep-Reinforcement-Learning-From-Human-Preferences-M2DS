@@ -6,15 +6,15 @@ from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack
 from stable_baselines3.common.atari_wrappers import AtariWrapper
 import time
 
-# Charger l'environnement avec affichage activé
+# Charger l'environnement
 def make_env():
-    env = gym.make("Pong-v4", render_mode="human")  # <--- Activation du rendu
-    env = AtariWrapper(env)  # Redimensionne à 84x84 et normalise
+    env = gym.make("Pong-v4", render_mode="human")  
+    env = AtariWrapper(env) 
     return env
 
-# Créer l'environnement sans vectorisation (pas nécessaire pour jouer)
-env = DummyVecEnv([make_env])  # <--- Vectorisation requise pour SB3
-env = VecFrameStack(env, n_stack=4)  # <--- Empilement de 4 images
+# Créer l'environnement 
+env = DummyVecEnv([make_env])  
+env = VecFrameStack(env, n_stack=4)  
 
 # Charger le modèle entraîné
 model = PPO.load("ppo_pong")
@@ -26,7 +26,7 @@ done = False
 while not done:
     action, _ = model.predict(obs)  # L'agent choisit la meilleure action
     obs, reward, done, info = env.step(action)
-    env.render()  # <--- Affichage visuel du jeu
-    time.sleep(0.05)  # Pause pour ralentir l'affichage et mieux voir
+    env.render()  # Affichage du jeu
+    time.sleep(0.05)
 
 env.close()
