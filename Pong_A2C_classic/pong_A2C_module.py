@@ -35,8 +35,8 @@ model = A2C(
     device="auto"
 )
 
-model.learn(total_timesteps=5_000_000)
+model.learn(total_timesteps=50_000_000)
 
 # Sauvegarde du modèle
-model.save("a2c_pong")
+model.save("a2c_pong_base")
 print("Modèle A2C sauvegardé !")
