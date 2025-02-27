@@ -4,9 +4,9 @@ import gymnasium as gym
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack, VecNormalize
 from stable_baselines3.common.atari_wrappers import AtariWrapper
-# from torch.utils.tensorboard import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 
-# writer = SummaryWriter(log_dir="./tensorboard_logs/ppo_logs")
+writer = SummaryWriter(log_dir="./tensorboard_logs/ppo_logs")
 
 # Créer un environnement 
 def make_env():
@@ -15,8 +15,8 @@ def make_env():
     return env
 
 env = DummyVecEnv([make_env])  
-env = VecNormalize(env, norm_reward=True)
-env = VecFrameStack(env, n_stack=4)  
+env = VecFrameStack(env, n_stack=4)
+env = VecNormalize(env, norm_obs=False, norm_reward=True)    
 
 # Définir le modèle PPO
 model = PPO(
