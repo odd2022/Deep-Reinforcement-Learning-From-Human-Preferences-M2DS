@@ -25,7 +25,7 @@ model = DQN(
     exploration_fraction=0.1,  
     exploration_final_eps=0.02,  
     verbose=1,  
-    tensorboard_log="./dqn_logs/",
+    tensorboard_log="./tensorboard_logs/dqn_logs/",
 )
 
 # Entraîner le modèle pendant 500 000 steps

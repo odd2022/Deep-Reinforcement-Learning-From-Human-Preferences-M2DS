@@ -1,3 +1,4 @@
+# We just tested this code to check at performances 
 # Code from https://github.com/bhctsntrk/OpenAIPong-DQN
 
 
@@ -26,7 +27,7 @@ ENVIRONMENT = "PongDeterministic-v4"
 DEVICE = torch.device("cpu")
 
 SAVE_MODELS = True  # Save models to file so you can test later
-MODEL_PATH = "./models/pong-cnn-"  # Models path for saving or loading
+MODEL_PATH = "./Pong_PPO_DQN/models/pong-cnn-"  # Models path for saving or loading
 SAVE_MODEL_INTERVAL = 100  # Save models at every X epoch
 TRAIN_MODEL = True  # Train model while playing (Make it False when testing a model)
 
@@ -259,7 +260,7 @@ if __name__ == "__main__":
 
     last_100_ep_reward = deque(maxlen=100)  # Last 100 episode rewards
     total_step = 1  # Cumulkative sum of all steps in episodes
-    writer = SummaryWriter(log_dir="./tensorboard_logs")
+    writer = SummaryWriter(log_dir="./tensorboard_logs/dqn_bhctsntrk")
     for episode in range(startEpisode, MAX_EPISODE):
 
         startTime = time.time()  # Keep time
