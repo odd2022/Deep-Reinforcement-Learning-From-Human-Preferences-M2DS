@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 import pandas as pd
 import matplotlib.pyplot as plt
-from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack, VecNormalize
+from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack, VecNormalize, VecTransposeImage
 from stable_baselines3.common.atari_wrappers import AtariWrapper
 from torch.utils.tensorboard import SummaryWriter
 import os
@@ -37,6 +37,7 @@ def make_env():
 
 env = DummyVecEnv([make_env])
 env = VecFrameStack(env, n_stack=N_STACK, channels_order='last')
+env = VecTransposeImage(env)
 env = VecNormalize(env, norm_obs=True, norm_reward=False) 
 
 # Modèles Actor et Critic
@@ -93,7 +94,8 @@ def advantage_actor_critic(env, max_epochs, max_episodes, learning_rate, gamma):
     for episode in range(max_episodes):
         log_probas, values, rewards = [], [], []
         state = env.reset()
-        state = np.transpose(state, (0, 3, 1, 2))  # (batch, H, W, C) devient (batch, C, H, W)
+        # print(state.shape)
+        # state = np.transpose(state, (0, 3, 1, 2))  # (batch, H, W, C) devient (batch, C, H, W)
         state = torch.tensor(state, dtype=torch.float32)
 
         episode_entropy = 0
@@ -115,7 +117,7 @@ def advantage_actor_critic(env, max_epochs, max_episodes, learning_rate, gamma):
             episode_entropy += entropy.item()
 
             next_state, reward, done, info = env.step(action)  
-            next_state = np.transpose(next_state, (0, 3, 1, 2))  
+            # next_state = np.transpose(next_state, (0, 3, 1, 2))  
             next_state = torch.tensor(next_state, dtype=torch.float32) 
 
             values.append(value)
