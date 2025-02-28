@@ -28,7 +28,7 @@ The folder includes two scripts:
 
 Here is the mean reward after 5millions timesteps
 
-![results_A2C_pong](./results_A2C_pong.jpg)
+![results_A2C_pong](./images_readme/results_A2C_pong.jpg)
 
 ## Pong_human_pref
 
@@ -42,11 +42,11 @@ This folder contains the implementation of the human preference-based learning a
 
 Here is how we can see the preferences:
 
-![human_preferences](./human_preferences.png)
+![human_preferences](./images_readme/human_preferences.png)
 
 Here is how we can select the preferences: 
 
-![human_preferences_writing](./human_preferences_writing.png)
+![human_preferences_writing](./images_readme/human_preferences_writing.png)
 
 
 ## Pong_PPO_DQN 
