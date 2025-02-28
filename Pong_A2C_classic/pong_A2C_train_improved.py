@@ -79,17 +79,19 @@ class Critic(nn.Module):
 
 # Generalized Advantage Estimation (GAE)
 def compute_gae(rewards, values, gamma=GAMMA, lambda_=LAMBDA_GAE):
-    rewards = torch.tensor(rewards, dtype=torch.float32)  # Convertir en tensor PyTorch
-    values = torch.stack(values)  # Correcte conversion des tensors en un grand tensor
+    rewards = torch.tensor(np.array(rewards), dtype=torch.float32)  # Convertir en tensor PyTorch
+    values = [torch.tensor(v, dtype=torch.float32) if not isinstance(v, torch.Tensor) else v for v in values]
+    values = torch.stack(values, dim=0).detach()  # Stacker avec dim=0
 
-    gae = 0
+    gae = torch.zeros_like(values[0])  # Initialiser un tenseur de même taille que values[0]
     returns = []
+
     for i in reversed(range(len(rewards))):
         delta = rewards[i] + gamma * values[i + 1] - values[i]
         gae = delta + gamma * lambda_ * gae
         returns.insert(0, gae + values[i])
 
-    return torch.tensor(returns, dtype=torch.float32)
+    return torch.stack(returns, dim=0)
 
 
 
@@ -108,14 +110,14 @@ def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
         for step in range(1000):  # Limite du nombre de steps par épisode
             value = critic(state).squeeze().detach()
             policy = actor(state)
-            
+
             action = torch.multinomial(policy, num_samples=1).squeeze().cpu().numpy()
             log_proba = torch.log(policy.gather(1, torch.tensor(action).unsqueeze(1)))
-            
+
             next_state, reward, done, _ = env.step(action)
             next_state = torch.tensor(next_state, dtype=torch.float32)
 
-            values.append(value)
+            values.append(value)  # Ajouter V(s)
             log_probas.append(log_proba)
             rewards.append(reward)
 
@@ -124,14 +126,24 @@ def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
 
             state = next_state
 
-        # Calcul des Q-values avec GAE
-        values.append(critic(next_state).squeeze().detach())
+        # **Correction : Ajouter V(s_T)**
+        last_value = critic(next_state).squeeze().detach()
+        values.append(last_value)  # Ajout de V(s_T) pour éviter l'IndexError
+
+        # **Correction : `values` doit être `len(rewards) + 1`**
         returns = compute_gae(rewards, values, gamma, LAMBDA_GAE)
-        values = torch.tensor(values[:-1], dtype=torch.float32)
 
         # Calcul de l'avantage
+        values = torch.stack(values[:-1])  # Retirer V(s_T) pour le calcul de l'avantage
         advantage = returns - values
-        log_probas = torch.cat(log_probas)
+
+        # log_probas = torch.cat(log_probas, dim=0).view(advantage.shape)
+        log_probas = torch.cat(log_probas, dim=0).view(len(rewards), env.num_envs)
+
+
+        # print(f"log_probas shape: {log_probas.shape}")
+        # print(f"advantage shape: {advantage.shape}")
+
 
         # Calcul des pertes Actor-Critic
         actor_loss = (-log_probas * advantage).mean()
@@ -153,6 +165,7 @@ def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
         print(f"Episode {episode}: Reward = {np.sum(rewards)}")
 
     return
+
 
 
 # Exécution principale protégée pour Windows
