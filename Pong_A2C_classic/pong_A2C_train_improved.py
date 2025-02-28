@@ -74,8 +74,6 @@ class Critic(nn.Module):
         )
 
     def forward(self, state):
-        print(state.shape)
-        # state = state.permute(0, 3, 1, 2)  # Ajustement des dimensions
         return self.network(state)
 
 
