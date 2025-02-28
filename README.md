@@ -21,9 +21,9 @@ This folder contains implementations of the Advantage Actor-Critic (A2C) algorit
 
 The folder includes two scripts:
 
-- `$ pong_A2C_train.py`: Implements our custom A2C algorithm for training the agent.
+- `pong_A2C_train.py`: Implements our custom A2C algorithm for training the agent.
 
-- `$pong_A2C_module.py`: Uses the A2C implementation from the Stable Baselines library. We evaluate this module because it was used for the human preference experiments. For simplicity, we opted for the pre-existing module, but an improvement to our code could involve integrating our custom A2C implementation into the human preference experiments.
+- `pong_A2C_module.py`: Uses the A2C implementation from the Stable Baselines library. We evaluate this module because it was used for the human preference experiments. For simplicity, we opted for the pre-existing module, but an improvement to our code could involve integrating our custom A2C implementation into the human preference experiments.
 
 
 Here is the mean reward after 5millions timesteps
@@ -32,7 +32,7 @@ Here is the mean reward after 5millions timesteps
 
 ## Pong_human_pref
 
-This folder contains the implementation of the human preference-based learning approach from the paper. It represents the core of our work, as it directly applies the methodology described in the study.
+This folder contains the implementation of the human preference-based learning approach from the paper. It represents the core of our work, as it directly applies the methodology described in the study. We only implemented human preferences, not synthetic preferences.
 
 - `drlhp_test_A2C_video_pretrain.py` : Pretrains the reward model before applying the algorithm, including video rendering to facilitate preference selection.
 
