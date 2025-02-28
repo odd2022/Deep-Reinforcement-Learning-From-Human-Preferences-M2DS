@@ -25,6 +25,8 @@ The folder includes two scripts:
 
 - pong_A2C_module.py: Uses the A2C implementation from the Stable Baselines library. We evaluate this module because it was used for the human preference experiments. For simplicity, we opted for the pre-existing module, but an improvement to our code could involve integrating our custom A2C implementation into the human preference experiments.
 
+Here is the reward we get after 5millions timesteps
+![results_A2C_pong](./results_A2C_pong.jpg)
 
 ## Pong_human_pref
 
