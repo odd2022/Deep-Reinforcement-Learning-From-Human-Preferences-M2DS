@@ -17,9 +17,9 @@ ENTROPY_BETA = 0.01
 HIDDEN_SIZE = 512
 LAMBDA_GAE = 0.95
 N_ENVS = 8  # Nombre d'environnements parallèles
-N_STACK = 4  # Nombre de frames empilées
+N_STACK = 4  # Nombre de frames 
 MAX_EPISODES = 5000000
-USE_PARALLEL_ENV = True  # Si False, utilise DummyVecEnv à la place de SubprocVecEnv
+USE_PARALLEL_ENV = True  
 
 # TensorBoard Logging
 log_dir = "./tensorboard_logs/a2c_pong/"
@@ -54,7 +54,7 @@ class Actor(nn.Module):
         )
 
     def forward(self, state):
-        # state = state / 255.0  # Normalisation de l'état
+        state = state / 255.0  # Normalisation de l'état
         return self.network(state)
 
 
@@ -81,11 +81,11 @@ class Critic(nn.Module):
 
 # Generalized Advantage Estimation (GAE)
 def compute_gae(rewards, values, gamma=GAMMA, lambda_=LAMBDA_GAE):
-    rewards = torch.tensor(np.array(rewards), dtype=torch.float32)  # Convertir en tensor PyTorch
+    rewards = torch.tensor(np.array(rewards), dtype=torch.float32) 
     values = [torch.tensor(v, dtype=torch.float32) if not isinstance(v, torch.Tensor) else v for v in values]
-    values = torch.stack(values, dim=0).detach()  # Stacker avec dim=0
+    values = torch.stack(values, dim=0).detach() 
 
-    gae = torch.zeros_like(values[0])  # Initialiser un tenseur de même taille que values[0]
+    gae = torch.zeros_like(values[0]) 
     returns = []
 
     for i in reversed(range(len(rewards))):
@@ -132,11 +132,10 @@ def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
 
             state = next_state
 
-        # **Correction : Ajouter V(s_T)**
+  
         last_value = critic(next_state).squeeze().detach()
-        values.append(last_value)  # Ajout de V(s_T) pour éviter l'IndexError
+        values.append(last_value)  
 
-        # **Correction : `values` doit être `len(rewards) + 1`**
         returns = compute_gae(rewards, values, gamma, LAMBDA_GAE)
 
         # Calcul de l'avantage

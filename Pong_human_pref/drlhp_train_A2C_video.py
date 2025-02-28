@@ -15,7 +15,7 @@ class PrefInterface:
     def __init__(self, synthetic_prefs, max_segs, log_dir):
         self.synthetic_prefs = synthetic_prefs
         self.max_segs = max_segs
-        self.segments = deque(maxlen=max_segs)  # Circular buffer
+        self.segments = deque(maxlen=max_segs)  # Buffer circulaire pour les segments
         self.tested_pairs = set()
         self.log_dir = log_dir
 
@@ -113,8 +113,8 @@ class PrefInterface:
 class RewardPredictor(nn.Module):
     def __init__(self, input_dim):
         super(RewardPredictor, self).__init__()
-        flattened_input_dim = input_dim[0] * input_dim[1] * input_dim[2]  # Flatten (H * W * C)
-        self.fc1 = nn.Linear(flattened_input_dim, 128)  # Update input size here
+        flattened_input_dim = input_dim[0] * input_dim[1] * input_dim[2]  
+        self.fc1 = nn.Linear(flattened_input_dim, 128)  
         self.fc2 = nn.Linear(128, 64)
         self.fc3 = nn.Linear(64, 1)
         self.relu = nn.ReLU()
@@ -131,25 +131,19 @@ class RewardPredictor(nn.Module):
         s1_obs = np.array([obs for obs, _ in s1], dtype=np.float32)
         s2_obs = np.array([obs for obs, _ in s2], dtype=np.float32)
 
-        # Convert numpy arrays to PyTorch tensors
+        # De numpy arrays à PyTorch tensors
         s1_tensor = torch.tensor(np.mean(s1_obs, axis=0), dtype=torch.float32).unsqueeze(0)
         s2_tensor = torch.tensor(np.mean(s2_obs, axis=0), dtype=torch.float32).unsqueeze(0)
 
-        # Print tensor shape before flattening
-        print(f"Before flattening: s1_tensor shape: {s1_tensor.shape}, s2_tensor shape: {s2_tensor.shape}")
-
-        # Flatten the input tensors (convert from [1, H, W, C] to [1, H*W*C])
+        # Applatir les tenseurs d'entrée (de [1, H, W, C] à [1, H*W*C])
         s1_tensor = s1_tensor.view(1, -1)
         s2_tensor = s2_tensor.view(1, -1)
 
-        # Print tensor shape after flattening
-        print(f"After flattening: s1_tensor shape: {s1_tensor.shape}, s2_tensor shape: {s2_tensor.shape}")
-
-        # Forward pass through the reward predictor
+        # Forward pass avec le reward predictor
         r1 = self.forward(s1_tensor).squeeze()
         r2 = self.forward(s2_tensor).squeeze()
 
-        # Compute preference-based loss
+        # Preference-based loss
         input_tensor = torch.sigmoid(r1 - r2).unsqueeze(0)
         target = torch.tensor([preference[0]], dtype=torch.float32)
 

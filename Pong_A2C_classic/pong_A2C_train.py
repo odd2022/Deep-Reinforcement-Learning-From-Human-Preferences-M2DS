@@ -21,7 +21,7 @@ HIDDEN_SIZE = 512
 
 # Simulation parameters
 MAX_EPOCHS = 100000
-MAX_EPISODES = 1000 # On augmente à 100 épisodes pour mieux voir l'évolution
+MAX_EPISODES = 1000 
 N_STACK = 4  # Nombre de frames empilées
 
 # TensorBoard Logging
