@@ -18,7 +18,7 @@ HIDDEN_SIZE = 512
 LAMBDA_GAE = 0.95
 N_ENVS = 8  # Nombre d'environnements parallèles
 N_STACK = 4  # Nombre de frames empilées
-MAX_EPISODES = 1000
+MAX_EPISODES = 5000000
 USE_PARALLEL_ENV = True  # Si False, utilise DummyVecEnv à la place de SubprocVecEnv
 
 # TensorBoard Logging
@@ -54,7 +54,7 @@ class Actor(nn.Module):
         )
 
     def forward(self, state):
-        state = state / 255.0  # Normalisation de l'état
+        # state = state / 255.0  # Normalisation de l'état
         return self.network(state)
 
 
@@ -112,7 +112,7 @@ def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
         state = env.reset()
         state = torch.tensor(state, dtype=torch.float32)
 
-        for step in range(50000):  # Limite du nombre de steps par épisode
+        for step in range(1000):  # Limite du nombre de steps par épisode
             value = critic(state).squeeze().detach()
             policy = actor(state)
 
@@ -125,6 +125,7 @@ def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
             values.append(value)  # Ajouter V(s)
             log_probas.append(log_proba)
             rewards.append(reward)
+
 
             if done[0]:  # Vérification correcte avec VecEnv
                 break
@@ -164,8 +165,9 @@ def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
         critic_optimizer.step()
 
         # Log reward dans TensorBoard
-        writer.add_scalar("rollout/total_reward", np.sum(rewards), episode)
-        print(f"Episode {episode}: Reward = {np.sum(rewards)}")
+        writer.add_scalar("rollout/total_reward", np.sum(rewards, axis=0)[0]
+, episode)
+        print(f"Episode {episode}: Reward = {np.sum(rewards, axis=0)[0]}")
 
         # Mise à jour des schedulers de Learning Rate
         scheduler_actor.step()
@@ -180,11 +182,11 @@ if __name__ == "__main__":
     if USE_PARALLEL_ENV:
         env = SubprocVecEnv([make_env() for _ in range(N_ENVS)])  # 8 environnements en parallèle
     else:
-        env = DummyVecEnv([make_env])  # 1 seul environnement, sans multiprocessing
-    
+        env = DummyVecEnv([make_env()])  # 1 seul environnement, sans multiprocessing
+
     env = VecFrameStack(env, n_stack=N_STACK, channels_order='last')
     env = VecTransposeImage(env)
-    env = VecNormalize(env, norm_obs=True, norm_reward=True)
+    env = VecNormalize(env, norm_obs=True, norm_reward=False)
 
     # Lancement de l'entraînement
     advantage_actor_critic(env, MAX_EPISODES, learning_rate=LR, gamma=GAMMA)
