@@ -112,7 +112,7 @@ def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
         state = env.reset()
         state = torch.tensor(state, dtype=torch.float32)
 
-        for step in range(1000):  # Limite du nombre de steps par épisode
+        for step in range(50000):  # Limite du nombre de steps par épisode
             value = critic(state).squeeze().detach()
             policy = actor(state)
 
