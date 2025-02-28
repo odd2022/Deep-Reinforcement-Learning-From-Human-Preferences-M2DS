@@ -11,33 +11,35 @@ We focused on the Atari Game "Pong".
 
 We use python 3.9 in this repo.
 
-To vizualize the curves and data, we use tensorboard.
+To vizualize the curves and data, we use tensorboar
 
 # Organisation of the folders 
 
 ## Pong_A2C_classic
 
-This folder contains the implementations of the Avantage Actor-Critic algorithm on the Pong Game. This is the algorithm used in the article to optimize the policy of Atari Games in the paper. 
-There are 2 scripts in this folder:
+This folder contains implementations of the Advantage Actor-Critic (A2C) algorithm for the Pong game. The A2C algorithm, as described in the referenced paper, is used to optimize the policy of Atari games.
 
-- pong_A2C_train.py contains our implementation of the A2C algorithm
+The folder includes two scripts:
 
-- pong_A2C_module.py contains the training of the module A2C given by the library Stable Baseline. We test this module because it is the one we used for the human preferences.
-  This is done for simplicity,to improve our code, we could use our implementation of A2C in the Human preference part.
+- pong_A2C_train.py: Implements our custom A2C algorithm for training the agent.
+
+- pong_A2C_module.py: Uses the A2C implementation from the Stable Baselines library. We evaluate this module because it was used for the human preference experiments. For simplicity, we opted for the pre-existing module, but an improvement to our code could involve integrating our custom A2C implementation into the human preference experiments.
+
 
 ## Pong_human_pref
 
-In this section me implemented the algorithm with human preferences
+This folder contains the implementation of the human preference-based learning approach from the paper. It represents the core of our work, as it directly applies the methodology described in the study.
 
-- drlhp_test_A2C_video_pretrain.py we pretrain the reward model before using the algo + video rendering for preferences. 
+- drlhp_test_A2C_video_pretrain.py: Pretrains the reward model before applying the algorithm, including video rendering to facilitate preference selection.
 
-- drlhp_test_A2C_video.py and drlhp_train_A2C_video.py we train the model with human preferences and we render video to be able to chose correctly the preferences. To test it, run drlhp_test_A2C_video.py
+- drlhp_test_A2C_video.py and drlhp_train_A2C_video.py: Train the model using human preferences with video rendering, allowing for accurate preference selection. To test the model, run drlhp_test_A2C_video.py.
 
-- drlhp_test_A2C.py and drlhp_train_A2C.py: we took this model as a basis but here you don't have video rendering so you can't really chose between the preferences. To test it, run drlhp_test_A2C.py
+- drlhp_test_A2C.py and drlhp_train_A2C.py: Serve as a baseline without video rendering, making manual preference selection more difficult. To test this version, run drlhp_test_A2C.py.
 
 ## Pong_PPO_DQN 
 
-This repository was created to test different classic RL algorithms on the Pong Game to discover the game and different algortihms. 
+This folder contains our preliminary work, where we tested different reinforcement learning algorithms on the Pong game to explore the game dynamics and establish baseline results. 
+The goal was to familiarize ourselves with classic RL methods and assess their expected performance before implementing our main approach.
 
 - pong_DQN_bhctsntrk.py : we tested the code provided by [DQN Algorithm for Solving Atari Pong](https://github.com/bhctsntrk/OpenAIPong-DQN) to have an idea of the results we should have. 
 
