@@ -19,12 +19,13 @@ To vizualize the curves and data, we use tensorboar
 
 This folder contains implementations of the Advantage Actor-Critic (A2C) algorithm for the Pong game. The A2C algorithm, as described in the referenced paper, is used to optimize the policy of Atari games.
 
-The folder includes two scripts:
+The folder includes three scripts:
 
 - `pong_A2C_train.py`: Implements our custom A2C algorithm for training the agent.
 
 - `pong_A2C_module.py`: Uses the A2C implementation from the Stable Baselines library. We evaluate this module because it was used for the human preference experiments. For simplicity, we opted for the pre-existing module, but an improvement to our code could involve integrating our custom A2C implementation into the human preference experiments.
 
+- `pong_A2C_train_multiple_environnements.py`: uses multiple environments during training to enhance efficiency and improve the performance of pong_A2C_module.py.
 
 Here is the mean reward after 5millions timesteps (the results are comparable to the article's one given in the illustration)
 
