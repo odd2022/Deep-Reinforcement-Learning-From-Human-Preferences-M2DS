@@ -79,12 +79,16 @@ class Critic(nn.Module):
 
 # Generalized Advantage Estimation (GAE)
 def compute_gae(rewards, values, gamma=GAMMA, lambda_=LAMBDA_GAE):
+    rewards = torch.tensor(rewards, dtype=torch.float32)  # Convertir les rewards en tenseurs
+    values = torch.tensor(values, dtype=torch.float32)  # Convertir les valeurs en tenseurs
+    
     gae = 0
     returns = []
     for i in reversed(range(len(rewards))):
-        delta = rewards[i] + gamma * values[i + 1] - values[i]
+        delta = rewards[i] + gamma * values[i + 1].squeeze() - values[i].squeeze()
         gae = delta + gamma * lambda_ * gae
-        returns.insert(0, gae + values[i])
+        returns.insert(0, gae + values[i].squeeze())
+
     return torch.tensor(returns, dtype=torch.float32)
 
 
