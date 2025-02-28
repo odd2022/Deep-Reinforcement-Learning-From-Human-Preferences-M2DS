@@ -175,7 +175,7 @@ class HumanPreferencesEnvWrapper(gym.Wrapper):
 
     def step(self, action):
         """Exécute une action et collecte les données pour l'entraînement des préférences."""
-        step_result = self.env.step(action)  # Utiliser self.env au lieu de env
+        step_result = self.env.step(action) 
 
         if len(step_result) == 5:
             obs, reward, terminated, truncated, info = step_result
@@ -208,6 +208,7 @@ class HumanPreferencesEnvWrapper(gym.Wrapper):
 
             if len(self.segments) >= 2:
                 self._compare_segments()
+
     def _store_segment(self):
         """Ajoute un segment à la mémoire."""
         segment = list(self.current_segment)
@@ -223,7 +224,7 @@ class HumanPreferencesEnvWrapper(gym.Wrapper):
             
             if pair is None:
                 print("Pas encore assez de paires de segments non testées.")
-                return  # Sortir proprement si aucune paire n'est disponible
+                return  # Sortir si aucune paire n'est disponible
 
             s1, s2 = pair
             preference = pref
