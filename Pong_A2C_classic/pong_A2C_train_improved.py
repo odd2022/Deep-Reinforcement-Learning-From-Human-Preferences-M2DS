@@ -54,6 +54,7 @@ class Actor(nn.Module):
         )
 
     def forward(self, state):
+        state = state / 255.0  # Normalisation de l'état
         return self.network(state)
 
 
@@ -74,6 +75,7 @@ class Critic(nn.Module):
         )
 
     def forward(self, state):
+        state = state / 255.0  # Normalisation de l'état
         return self.network(state)
 
 
@@ -94,13 +96,16 @@ def compute_gae(rewards, values, gamma=GAMMA, lambda_=LAMBDA_GAE):
     return torch.stack(returns, dim=0)
 
 
-
 # Boucle d'entraînement Advantage Actor-Critic
 def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
     actor = Actor((N_STACK, 84, 84), env.action_space.n)
     critic = Critic((N_STACK, 84, 84))
-    actor_optimizer = optim.Adam(actor.parameters(), lr=learning_rate)
-    critic_optimizer = optim.Adam(critic.parameters(), lr=learning_rate)
+    actor_optimizer = optim.RMSprop(actor.parameters(), lr=learning_rate, alpha=0.99, eps=1e-5)
+    critic_optimizer = optim.RMSprop(critic.parameters(), lr=learning_rate, alpha=0.99, eps=1e-5)
+
+    # Schedulers pour Learning Rate
+    scheduler_actor = torch.optim.lr_scheduler.StepLR(actor_optimizer, step_size=50000, gamma=0.99)
+    scheduler_critic = torch.optim.lr_scheduler.StepLR(critic_optimizer, step_size=50000, gamma=0.99)
 
     for episode in range(max_episodes):
         log_probas, values, rewards = [], [], []
@@ -137,13 +142,11 @@ def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
         values = torch.stack(values[:-1])  # Retirer V(s_T) pour le calcul de l'avantage
         advantage = returns - values
 
-        # log_probas = torch.cat(log_probas, dim=0).view(advantage.shape)
+        # **Normalisation de l'advantage avant l'entraînement**
+        advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
+
+        # Reshape log_probas pour qu'il corresponde à la taille de advantage
         log_probas = torch.cat(log_probas, dim=0).view(len(rewards), env.num_envs)
-
-
-        # print(f"log_probas shape: {log_probas.shape}")
-        # print(f"advantage shape: {advantage.shape}")
-
 
         # Calcul des pertes Actor-Critic
         actor_loss = (-log_probas * advantage).mean()
@@ -164,8 +167,11 @@ def advantage_actor_critic(env, max_episodes, learning_rate, gamma):
         writer.add_scalar("rollout/total_reward", np.sum(rewards), episode)
         print(f"Episode {episode}: Reward = {np.sum(rewards)}")
 
-    return
+        # Mise à jour des schedulers de Learning Rate
+        scheduler_actor.step()
+        scheduler_critic.step()
 
+    return
 
 
 # Exécution principale protégée pour Windows
@@ -185,3 +191,4 @@ if __name__ == "__main__":
 
     # Fermeture du logger
     writer.close()
+
