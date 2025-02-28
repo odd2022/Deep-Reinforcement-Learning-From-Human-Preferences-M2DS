@@ -15,7 +15,7 @@ class PrefInterface:
     def __init__(self, synthetic_prefs, max_segs, log_dir):
         self.synthetic_prefs = synthetic_prefs
         self.max_segs = max_segs
-        self.segments = deque(maxlen=max_segs)  # Circular buffer
+        self.segments = deque(maxlen=max_segs)  # Buffer circulaire pour les segments
         self.tested_pairs = set()
         self.log_dir = log_dir
 
