@@ -38,7 +38,7 @@ def make_env():
 env = DummyVecEnv([make_env])
 env = VecFrameStack(env, n_stack=N_STACK, channels_order='last')
 env = VecTransposeImage(env)
-env = VecNormalize(env, norm_obs=True, norm_reward=False) 
+env = VecNormalize(env, norm_obs=True, norm_reward=False)
 
 # Modèles Actor et Critic
 class Actor(nn.Module):
@@ -59,7 +59,6 @@ class Actor(nn.Module):
         )
 
     def forward(self, state):
-        state = state / 255.0
         return self.network(state)
 
 class Critic(nn.Module):

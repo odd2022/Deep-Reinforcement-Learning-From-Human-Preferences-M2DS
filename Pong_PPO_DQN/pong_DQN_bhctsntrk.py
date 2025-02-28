@@ -26,12 +26,12 @@ ENVIRONMENT = "PongDeterministic-v4"
 
 DEVICE = torch.device("cpu")
 
-SAVE_MODELS = True  # Save models to file so you can test later
-MODEL_PATH = "./Pong_PPO_DQN/models/pong-cnn-"  # Models path for saving or loading
+SAVE_MODELS = False  # Save models to file so you can test later
+MODEL_PATH = "./Pong_PPO_DQN/models/to_save/pong-cnn-"  # Models path for saving or loading
 SAVE_MODEL_INTERVAL = 100  # Save models at every X epoch
-TRAIN_MODEL = True  # Train model while playing (Make it False when testing a model)
+TRAIN_MODEL = False  # Train model while playing (Make it False when testing a model)
 
-LOAD_MODEL_FROM_FILE = False  # Load model from file
+LOAD_MODEL_FROM_FILE = True  # Load model from file
 LOAD_FILE_EPISODE = 900  # Load Xth episode from file
 
 BATCH_SIZE = 64  # Minibatch size that select randomly from mem for train nets
