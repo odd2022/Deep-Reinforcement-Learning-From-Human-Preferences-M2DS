@@ -46,7 +46,7 @@ Here is how we can see the preferences:
 
 Here is how we can select the preferences: 
 
-![human_preferences_writing](./human_preference_writing.png)
+![human_preferences_writing](./human_preferences_writing.png)
 
 
 ## Pong_PPO_DQN 
