@@ -40,7 +40,8 @@ This folder contains the implementation of the human preference-based learning a
 
 - `drlhp_test_A2C.py` and `drlhp_train_A2C.py` : Serve as a baseline without video rendering, making manual preference selection more difficult. To test this version, run drlhp_test_A2C.py.
 
-Here is how we can select the preferences: 
+Here is how we can select the preferences:
+ 
 ![human_preferences](./human_preferences.png)
 
 
