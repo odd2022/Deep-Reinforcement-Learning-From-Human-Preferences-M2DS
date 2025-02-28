@@ -34,19 +34,19 @@ Here is the mean reward after 5millions timesteps
 
 This folder contains the implementation of the human preference-based learning approach from the paper. It represents the core of our work, as it directly applies the methodology described in the study.
 
-- `$ drlhp_test_A2C_video_pretrain.py` : Pretrains the reward model before applying the algorithm, including video rendering to facilitate preference selection.
+- `drlhp_test_A2C_video_pretrain.py` : Pretrains the reward model before applying the algorithm, including video rendering to facilitate preference selection.
 
-- `$ drlhp_test_A2C_video.py` and `$ drlhp_train_A2C_video.py` : Train the model using human preferences with video rendering, allowing for accurate preference selection. To test the model, run drlhp_test_A2C_video.py.
+- `drlhp_test_A2C_video.py` and `drlhp_train_A2C_video.py` : Train the model using human preferences with video rendering, allowing for accurate preference selection. To test the model, run drlhp_test_A2C_video.py.
 
-- `$ drlhp_test_A2C.py` and `$ drlhp_train_A2C.py` : Serve as a baseline without video rendering, making manual preference selection more difficult. To test this version, run drlhp_test_A2C.py.
+- `drlhp_test_A2C.py` and `drlhp_train_A2C.py` : Serve as a baseline without video rendering, making manual preference selection more difficult. To test this version, run drlhp_test_A2C.py.
 
 ## Pong_PPO_DQN 
 
 This folder contains our preliminary work, where we tested different reinforcement learning algorithms on the Pong game to explore the game dynamics and establish baseline results. 
 The goal was to familiarize ourselves with classic RL methods and assess their expected performance before implementing our main approach.
 
-- `$ pong_DQN_bhctsntrk.py` : we tested the code provided by [DQN Algorithm for Solving Atari Pong](https://github.com/bhctsntrk/OpenAIPong-DQN) to have an idea of the results we should have. 
+- `pong_DQN_bhctsntrk.py` : we tested the code provided by [DQN Algorithm for Solving Atari Pong](https://github.com/bhctsntrk/OpenAIPong-DQN) to have an idea of the results we should have. 
 
-- `$ pong_DQN_train.py`  and `$pong DQN_test.py`: test of the DQN algorithm with the module given by the library Stable Baseline.
+- `pong_DQN_train.py`  and `pong DQN_test.py`: test of the DQN algorithm with the module given by the library Stable Baseline.
 
-- `$ pong_PPO_train.py`, `$ pong_PPO_test.py`, `$ pong_PPO_train_improved.py` : test of the PPO algorithm by the library Stable Baseline.
+- `pong_PPO_train.py`, `pong_PPO_test.py`, `pong_PPO_train_improved.py` : test of the PPO algorithm by the library Stable Baseline.
