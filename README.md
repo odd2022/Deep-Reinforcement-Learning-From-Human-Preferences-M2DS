@@ -2,7 +2,7 @@
 
 This repo shows our work on the article[Deep Reinforcement Learning from Human
 Preferences](https://blog.openai.com/deep-reinforcement-learning-from-human-preferences/),
-based on the paper <https://arxiv.org/pdf/1706.03741.pdf>.
+based on the paper <https://arxiv.org/pdf/1706.03741.pdf>. The project is explained in details in the file "RL_PROJECT_AIRAUD_TOUMI.pdf"
 
 To structure our code, we inspired ourselves from the pages [Deep Reinforcement Learning from Human Preferences](https://github.com/mrahtz/learning-from-human-preferences) and [Deep Reinforcement Learning from Human Preferences](https://github.com/HumanCompatibleAI/learning-from-human-preferences). 
 However, we created a simpler structure, compatible with a recent version of python and torch (the work done in the github repos we mentioned is done in python 3.7 and tensorflow).
